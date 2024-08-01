@@ -16,4 +16,7 @@ top
 
 nproc
 
+ps aux
+
+sudo iotop
 
