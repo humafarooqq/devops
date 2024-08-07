@@ -18,5 +18,4 @@ nproc
 
 ps aux
 
-sudo iotop
 
