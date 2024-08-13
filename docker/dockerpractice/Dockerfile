@@ -19,6 +19,9 @@ EXPOSE 3000
 
 # Set default environment variable
  ENV MESSAGE="Welcome to my awesome app!"
+#ARG default_msg= "welcome to my awesome app"
+#ENV MESSAGE= ${default_msg}
+
 # Start the application
 CMD ["node", "server.js"]
 

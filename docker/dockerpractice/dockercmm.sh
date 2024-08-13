@@ -70,4 +70,4 @@ sudo docker image prune -a
  
 #remove the unused docker objects
 sudo docker system prune
-has context menu
+has context men
