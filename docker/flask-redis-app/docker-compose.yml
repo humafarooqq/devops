@@ -1,0 +1,57 @@
+version: '3'
+
+services:
+  # Redis Service
+  redis:
+    image: redis:latest
+    container_name: redis
+    volumes:
+      - "/application_stack_data/redis:/data"
+
+  # Flask Web Application
+  web:
+    image: flask-redis-app:latest
+    container_name: flask_app
+    ports:
+      - "5000:5000"
+    depends_on:
+      - redis
+
+  # MySQL Service
+  mysql-server:
+    image: mysql:5.7
+    container_name: mysql-server
+    environment:
+      MYSQL_ROOT_PASSWORD: teamcity
+      MYSQL_DATABASE: teamcity
+      MYSQL_USER: teamcity
+      MYSQL_PASSWORD: teamcity
+    volumes:
+      - "/application_stack_data/mysql:/var/lib/mysql"
+
+  # TeamCity Service
+  teamcity-server:
+    image: jetbrains/teamcity-server
+    container_name: teamcity-server
+    environment:
+      TEAMCITY_SERVER_OPTS: "-Dteamcity.server.db.host=mysql-server -Dteamcity.server.db.name=teamcity -Dteamcity.server.db.user=teamcity -Dteamcity.server.db.password=teamcity"
+    volumes:
+      - "/application_stack_data/teamcity_data:/data/teamcity_server/datadir"
+      - "/application_stack_data/teamcity_log:/opt/teamcity/logs"
+    ports:
+      - "8111:8111"
+    depends_on:
+      - mysql-server
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - "./nginx.conf:/etc/nginx/nginx.conf"
+    depends_on:
+      - web
+      - teamcity-server
+
